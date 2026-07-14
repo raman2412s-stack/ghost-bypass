@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Bypass - Premium Game Modification Utilities</title>
+    <style>
+        :root {
+            --bg-main: #020203;
+            --bg-card: rgba(8, 8, 10, 0.75); /* Clean glassmorphism overlay */
+            --border-color: #1a1a20;
+            --text-main: #f4f4f5;
+            --text-muted: #6b6b76;
+            
+            /* UI Theme Accents */
+            --color-green: #00ff66;
+            --color-red: #ff3333;
+            --color-blue: #38bdf8; /* Sleek blue for navigation frames */
+            
+            /* Payment Branding colors */
+            --color-fib: #00A69C;
+            --color-fastpay: #E61C24;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 100px 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fullscreen Realistic Heavy Rainfall Canvas */
+        #waterCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Top Left Header Placement with Blinking Green Core Indicator */
+        .watermark {
+            position: absolute;
+            top: 32px;
+            left: 32px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #a1a1aa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .watermark::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background-color: var(--color-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-green);
+            animation: coreBlink 1.2s infinite ease-in-out;
+        }
+
+        @keyframes coreBlink {
+            0%, 100% { opacity: 0.3; box-shadow: 0 0 4px var(--color-green); }
+            50% { opacity: 1; box-shadow: 0 0 12px var(--color-green), 0 0 4px #fff; }
+        }
+
+        /* Sleek Navigation Bar */
+        .navigation-bar {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center; /* Center the middle elements */
+            align-items: center;
+            width: 90%;
+            max-width: 1100px;
+            z-index: 10;
+            box-sizing: border-box;
+            position: relative; /* Necessary for absolute positioning on the right action buttons */
+            min-height: 50px;
+        }
+
+        /* Middle centered menu links */
+        .nav-links-middle {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Far Right action buttons */
+        .nav-actions-right {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-item {
+            border: 1.5px solid var(--color-blue);
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.03);
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 10px 24px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .nav-item:hover {
+            background: rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Nav specific button stylings */
+        .btn-nav-login {
+            border: 1.5px solid var(--color-green);
+            background: rgba(0, 255, 102, 0.03);
+        }
+        .btn-nav-login:hover {
+            background: rgba(0, 255, 102, 0.12);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+        }
+
+        .btn-nav-admin {
+            border: 1.5px solid var(--color-red);
+            background: rgba(255, 51, 51, 0.03);
+            display: none; /* Only visible when admin logs in */
+        }
+        .btn-nav-admin:hover {
+            background: rgba(255, 51, 51, 0.15);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.25);
+        }
+
+        /* Hero Intro Section */
+        .hero-section {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 70px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin: 0 0 16px 0;
+            background: linear-gradient(180deg, #fff 30%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            font-size: 1.15rem;
+            color: #a1a1aa;
+            line-height: 1.6;
+            margin: 0 auto 30px auto;
+            max-width: 650px;
+        }
+
+        /* Detailed Bypass Information Section */
+        .bypass-info-container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
+        .bypass-info-container h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .bypass-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .bypass-column h4 {
+            font-size: 1rem;
+            color: var(--color-blue);
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .bypass-column p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Responsive Grid Frameworks */
+        .products-container, .dashboard-container {
+            width: 90%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px 0;
+            z-index: 2;
+        }
+
+        .dashboard-container {
+            grid-template-columns: 1fr;
+            margin-top: 40px;
+        }
+
+        /* Premium Dark Cards with Backdrop Blur */
+        .product-card, .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .product-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .badge {
+            align-self: flex-start;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        /* Theme Variants */
+        .theme-public { border-color: rgba(0, 255, 102, 0.2); }
+        .theme-public .badge {
+            background: rgba(0, 255, 102, 0.08);
+            border: 1px solid rgba(0, 255, 102, 0.3);
+            color: var(--color-green);
+        }
+
+        .theme-private { border-color: rgba(255, 51, 51, 0.25); }
+        .theme-private .badge {
+            background: rgba(255, 51, 51, 0.08);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            color: var(--color-red);
+        }
+
+        .product-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.01em;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0 0 24px 0;
+            flex-grow: 1;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+
+        .price-amount {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .price-period {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .btn-purchase {
+            width: 100%;
+            background: var(--text-main);
+            color: var(--bg-main);
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-purchase:hover { opacity: 0.9; }
+
+        /* Dashboard Internal Layout */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .green-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-green);
+        }
+
+        /* INTERACTIVE MODALS OVERLAYS */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 3, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .purchase-modal {
+            background: #08080a;
+            border: 1px solid #22222a;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            padding: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-backdrop.active .purchase-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Admin Dedicated Panel View Inside Modal */
+        .admin-modal-width {
+            max-width: 900px;
+            width: 95%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Wallet Selector Setup */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .payment-btn {
+            background: #0d0d11;
+            border: 1px solid #22222a;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-btn:hover {
+            border-color: #444452;
+        }
+
+        .payment-btn.selected[data-method="fib"] {
+            border-color: var(--color-fib);
+            background: rgba(0, 166, 156, 0.08);
+        }
+
+        .payment-btn.selected[data-method="fastpay"] {
+            border-color: var(--color-fastpay);
+            background: rgba(230, 28, 36, 0.08);
+        }
+
+        .payment-logo-txt {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .payment-btn[data-method="fib"] .payment-logo-txt {
+            color: var(--color-fib);
+        }
+
+        .payment-btn[data-method="fastpay"] .payment-logo-txt {
+            color: var(--color-fastpay);
+        }
+
+        .payment-sub {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #a1a1aa;
+            text-align: left;
+        }
+
+        .form-input {
+            background: #0d0d11;
+            border: 1px solid #22222a;
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            border-color: var(--color-green);
+        }
+
+        /* Screenshot proof uploader */
+        .file-upload-zone {
+            background: #0d0d11;
+            border: 1px dashed #333340;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .file-upload-zone:hover {
+            border-color: var(--color-green);
+        }
+
+        .file-upload-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+
+        .upload-text {
+            font-size: 0.8rem;
+            color: #a1a1aa;
+        }
+
+        .upload-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .img-preview {
+            display: none;
+            width: 100%;
+            max-height: 140px;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid #22222a;
+            margin-top: 10px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-confirm {
+            background: var(--color-green);
+            color: #000;
+        }
+
+        .btn-cancel {
+            background: #111115;
+            color: #a1a1aa;
+            border: 1px solid #22222a;
+        }
+
+        .btn-modal:hover {
+            opacity: 0.9;
+        }
+
+        /* --- ADMIN SUBMISSIONS VIEWER TABLE & GRID --- */
+        .admin-submission-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.2fr 1fr;
+            padding: 12px 16px;
+            background: #111115;
+            border: 1px solid #22222a;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .submission-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.2fr 1fr;
+            padding: 16px;
+            border-bottom: 1px solid #1a1a22;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .submission-row:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .admin-receipt-preview {
+            max-width: 80px;
+            max-height: 60px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #333;
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+
+        .admin-receipt-preview:hover {
+            transform: scale(1.1);
+        }
+
+        .empty-submissions {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body id="top">
+
+    <!-- Canvas for Natural Fluid Rain Streaks -->
+    <canvas id="waterCanvas"></canvas>
+
+    <div class="watermark">GHOST BYPASS</div>
+
+    <!-- Centered Middle Layout Navigation Bar -->
+    <nav class="navigation-bar">
+        <!-- Middle Links -->
+        <div class="nav-links-middle">
+            <a href="#top" class="nav-item">Dashboard</a>
+            <a href="#buy-section" class="nav-item">Buy</a>
+            <a href="#status-section" class="nav-item">Status</a>
+        </div>
+        
+        <!-- Pinned Top Right Actions -->
+        <div class="nav-actions-right">
+            <button id="adminNavBtn" class="nav-item btn-nav-admin" onclick="openAdminModal()">Admin Panel</button>
+            <button id="authNavBtn" class="nav-item btn-nav-login" onclick="openAuthModal()">Login / Sign Up</button>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <h1>Undetected Simulation & Modding Frameworks</h1>
+        <p>
+            We engineer pristine, low-latency execution engines built to withstand aggressive modern client-side scans. Gain deep system level control, ultra-low draw latencies, and flawless memory masking across all dynamic environment setups.
+        </p>
+    </section>
+
+    <!-- Deep Technical Breakdown Section -->
+    <div class="bypass-info-container">
+        <h3>ENGINEERED KERNEL ISOLATION ARCHITECTURE</h3>
+        <div class="bypass-info-grid">
+            <div class="bypass-column">
+                <h4>System Level Communication</h4>
+                <p>
+                    Unlike standard user-mode overlays that are easily scanned, Ghost Bypass establishes a communication bridge that runs safely outside of monitored system processes. By avoiding standard APIs and using custom input routing protocols instead, the framework completely prevents pattern detection and prevents modern anticheats from tracing call sequences back to your computer's hardware.
+                </p>
+            </div>
+            <div class="bypass-column">
+                <h4>Dynamic Hardware Spoofing</h4>
+                <p>
+                    To ensure permanent stability, our system features complete hardware serialization on launch. By modifying crucial system registry keys and masking active network interface identifiers, your machine's true identity is always protected. This layout ensures that even during rapid software update cycles, your execution remains clean and decoupled.
+                </p>
+            </div>
+            <div class="bypass-column">
+                <h4>Heuristic Memory Masking</h4>
+                <p>
+                    Traditional software hooks are easily flagged by memory scanning techniques. Ghost Bypass bypasses this entirely using sophisticated thread redirection and on-the-fly encryption. The cheat engine runs in transient memory areas that are dynamically scrambled, making it impossible for signature scans to lock onto, analyze, or flag active modding routines.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="products-container" id="buy-section">
+        
+        <div class="product-card theme-public">
+            <div class="badge">1 Month Pass</div>
+            <h2 class="product-title">Ghost Public</h2>
+            <p class="product-description">Complete memory monitoring bypass utility featuring fully randomized low-level system signatures optimized for secure evaluation cycles.</p>
+            <div class="price-container">
+                <span class="price-amount">$39.99</span>
+                <span class="price-period">/ month</span>
+            </div>
+            <button class="btn-purchase" data-product="Ghost Public (1 Month)" data-price="$39.99" style="background: var(--color-green); color: #000;">Purchase Access</button>
+        </div>
+
+        <div class="product-card theme-public" style="border-color: rgba(0, 255, 102, 0.35);">
+            <div class="badge" style="background: rgba(0, 255, 102, 0.15); color: var(--color-green);">Most Popular</div>
+            <h2 class="product-title">Ghost Public</h2>
+            <p class="product-description">Extended runtime access. Features hardware variant matching, multi-threaded virtualization hooks, and real-time color ring tracking updates.</p>
+            <div class="price-container">
+                <span class="price-amount">$89.99</span>
+                <span class="price-period">/ lifetime</span>
+            </div>
+            <button class="btn-purchase" data-product="Ghost Public (Lifetime)" data-price="$89.99" style="background: var(--color-green); color: #000;">Purchase Access</button>
+        </div>
+
+        <div class="product-card theme-private">
+            <div class="badge">Unrestricted Slots</div>
+            <h2 class="product-title">Ghost Private</h2>
+            <p class="product-description">Lifetime persistent package. Includes priority access to raw framework updates, customized builds, and dedicated ring-level isolation profiling.</p>
+            <div class="price-container">
+                <span class="price-amount">$200.00</span>
+                <span class="price-period">/ lifetime</span>
+            </div>
+            <button class="btn-purchase" data-product="Ghost Private (Lifetime)" data-price="$200.00" style="background: var(--color-red); color: #fff;">Purchase Access</button>
+        </div>
+
+    </div>
+
+    <!-- Anticheat Bypass Status Logs -->
+    <div class="dashboard-container" id="status-section">
+        <div class="dashboard-card">
+            <div class="dash-header">
+                <span style="font-weight: 700; font-size: 0.9rem; letter-spacing: 0.05em; color: #a1a1aa;">ANTI-CHEAT SECURITY BYPASS LOGS</span>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--color-green); font-weight: 600;">
+                    <span style="width: 6px; height: 6px; background: var(--color-green); border-radius: 50%; box-shadow: 0 0 8px var(--color-green); animation: coreBlink 1.2s infinite ease-in-out;"></span>
+                    LIVE MONITOR OPERATIONAL
+                </div>
+            </div>
+            
+            <div class="dash-grid">
+                <!-- Nexora -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED NEXORA</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+                <!-- Detect.ac -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED DETECT.AC</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+                <!-- Napse.ac -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED NAPSE.AC</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+                <!-- Storm -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED STORM</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+                <!-- Timeless -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED TIMELESS</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+                <!-- Ocean -->
+                <div class="stat-box">
+                    <div class="stat-info">
+                        <div class="stat-label">Security Engine</div>
+                        <div class="stat-value" style="color: var(--text-main);">UNDETECTED OCEAN</div>
+                    </div>
+                    <div class="green-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PURCHASE MODAL OVERLAY -->
+    <div class="modal-backdrop" id="purchaseModal">
+        <div class="purchase-modal">
+            <div class="modal-header">
+                <h3>SECURE CHECKOUT</h3>
+                <p id="checkoutProduct">Product Package</p>
+                <div id="checkoutPrice" style="font-size: 1.25rem; font-weight: 800; color: var(--color-green); margin-top: 4px;">$0.00</div>
+            </div>
+
+            <!-- Iraq Payment Options -->
+            <div class="form-group">
+                <label class="form-label">Select Payment Method</label>
+                <div class="payment-methods">
+                    <div class="payment-btn selected" data-method="fib" onclick="selectMethod('fib')">
+                        <span class="payment-logo-txt">FIB</span>
+                        <span class="payment-sub">First Iraqi Bank</span>
+                    </div>
+                    <div class="payment-btn" data-method="fastpay" onclick="selectMethod('fastpay')">
+                        <span class="payment-logo-txt">FastPay</span>
+                        <span class="payment-sub">Mobile Wallet</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone Entry -->
+            <div class="form-group">
+                <label class="form-label" id="phoneLabel">FIB Registered Phone Number</label>
+                <input type="tel" id="phoneInput" class="form-input" placeholder="+964 (770) 000-0000" required>
+            </div>
+
+            <!-- Screenshot Uploader -->
+            <div class="form-group">
+                <label class="form-label" id="uploadLabel">Upload FIB Payment Receipt Screenshot</label>
+                <div class="file-upload-zone" id="dropZone">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text" id="uploadText">Select or drop receipt screenshot</div>
+                    <div class="upload-hint">Supports PNG, JPG, or GIF up to 5MB</div>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+                <img id="uploadPreview" class="img-preview" alt="Payment Screenshot Preview">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('purchaseModal')">Cancel</button>
+                <button class="btn-modal btn-confirm" onclick="processPayment()">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION (LOGIN / REGISTER) MODAL -->
+    <div class="modal-backdrop" id="authModal">
+        <div class="purchase-modal">
+            <div class="modal-header" id="authHeader">
+                <h3 id="authTitle">USER SIGN IN</h3>
+                <p id="authSubtitle">Access your license logs and status reports</p>
+            </div>
+
+            <!-- Toggle Register/Login -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="tabLogin" class="btn-modal btn-confirm" style="font-size:0.8rem; padding: 10px;" onclick="setAuthTab('login')">Sign In</button>
+                <button id="tabRegister" class="btn-modal btn-cancel" style="font-size:0.8rem; padding: 10px;" onclick="setAuthTab('register')">Register</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" id="authUsername" class="form-input" placeholder="Enter username" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeModal('authModal')">Cancel</button>
+                <button class="btn-modal btn-confirm" id="authSubmitBtn" onclick="handleAuth()">Access Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div class="modal-backdrop" id="adminModal">
+        <div class="purchase-modal admin-modal-width">
+            <div class="modal-header">
+                <h3 style="color: var(--color-red);">ADMINISTRATION CONSOLE</h3>
+                <p>Verify incoming customer local payments and active receipts</p>
+            </div>
+
+            <div class="admin-submission-header">
+                <span>Product</span>
+                <span>Payment Gate</span>
+                <span>User Phone</span>
+                <span>Receipt Upload</span>
+                <span>Date submitted</span>
+            </div>
+
+            <div id="adminSubmissionList">
+                <!-- Dynamic Rows Go Here -->
+                <div class="empty-submissions">No pending payment entries found.</div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" style="max-width: 200px; margin-left: auto;" onclick="closeModal('adminModal')">Exit Terminal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FUNCTIONAL SCRIPTS -->
+    <script>
+        // Store variables for state tracking
+        let selectedMethod = 'fib';
+        let currentAuthTab = 'login';
+        let currentUser = null;
+        let pendingSubmissions = JSON.parse(localStorage.getItem('pending_receipts')) || [];
+
+        // Realistic Heavy Rainfall Animation Engine
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class RainDrop {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.vy = Math.random() * 15 + 15; // Realistic heavy speed terminal velocity
+                this.length = Math.random() * 20 + 15;
+                this.alpha = Math.random() * 0.15 + 0.05; // Faint, realistic opacity
+            }
+            update() {
+                this.y += this.vy;
+                if (this.y > height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(174, 219, 255, ${this.alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x, this.y + this.length);
+                ctx.stroke();
+            }
+        }
+
+        const drops = Array.from({ length: 120 }, () => new RainDrop());
+
+        function animateRain() {
+            ctx.clearRect(0, 0, width, height);
+            drops.forEach(drop => {
+                drop.update();
+                drop.draw();
+            });
+            requestAnimationFrame(animateRain);
+        }
+        animateRain();
+
+        // Modal triggers and managers
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Setup purchase actions on landing cards
+        document.querySelectorAll('.btn-purchase').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const product = btn.getAttribute('data-product');
+                const price = btn.getAttribute('data-price');
+                
+                document.getElementById('checkoutProduct').innerText = product;
+                document.getElementById('checkoutPrice').innerText = price;
+                openModal('purchaseModal');
+            });
+        });
+
+        // Toggle Local Iraq payment forms
+        function selectMethod(method) {
+            selectedMethod = method;
+            document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`.payment-btn[data-method="${method}"]`).classList.add('selected');
+
+            const phoneLabel = document.getElementById('phoneLabel');
+            const phoneInput = document.getElementById('phoneInput');
+            const uploadLabel = document.getElementById('uploadLabel');
+
+            if (method === 'fib') {
+                phoneLabel.innerText = "FIB Registered Phone Number";
+                phoneInput.placeholder = "+964 (770) 000-0000";
+                uploadLabel.innerText = "Upload FIB Payment Receipt Screenshot";
+            } else {
+                phoneLabel.innerText = "FastPay Wallet Registered Number";
+                phoneInput.placeholder = "+964 (750) 000-0000";
+                uploadLabel.innerText = "Upload FastPay Transaction Screenshot";
+            }
+        }
+
+        // File Uploader Event Listeners & Previews
+        const fileInput = document.getElementById('fileInput');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const uploadText = document.getElementById('uploadText');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadPreview.src = e.target.result;
+                    uploadPreview.style.display = 'block';
+                    uploadText.innerText = file.name;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Submit Receipt / Process Mock Payment Transaction
+        function processPayment() {
+            const phone = document.getElementById('phoneInput').value;
+            const product = document.getElementById('checkoutProduct').innerText;
+            const price = document.getElementById('checkoutPrice').innerText;
+            const file = fileInput.files[0];
+
+            if (!phone) {
+                alert("Please insert a valid Iraqi account mobile number.");
+                return;
+            }
+            if (!file) {
+                alert("Please upload your payment gateway confirmation screenshot.");
+                return;
+            }
+
+            // Create submission record
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newSubmission = {
+                    product: product,
+                    price: price,
+                    method: selectedMethod.toUpperCase(),
+                    phone: phone,
+                    receiptImg: e.target.result,
+                    date: new Date().toLocaleString()
+                };
+
+                pendingSubmissions.push(newSubmission);
+                localStorage.setItem('pending_receipts', JSON.stringify(pendingSubmissions));
+                
+                alert("Receipt uploaded! Admin agents are validating your deposit logs.");
+                closeModal('purchaseModal');
+
+                // Reset forms safely
+                document.getElementById('phoneInput').value = '';
+                fileInput.value = '';
+                uploadPreview.style.display = 'none';
+                uploadText.innerText = "Select or drop receipt screenshot";
+                renderAdminList();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Sign In / Register Tab Setup
+        function setAuthTab(tab) {
+            currentAuthTab = tab;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+            const authTitle = document.getElementById('authTitle');
+            const authSubmitBtn = document.getElementById('authSubmitBtn');
+
+            if (tab === 'login') {
+                tabLogin.className = "btn-modal btn-confirm";
+                tabRegister.className = "btn-modal btn-cancel";
+                authTitle.innerText = "USER SIGN IN";
+                authSubmitBtn.innerText = "Access Account";
+            } else {
+                tabLogin.className = "btn-modal btn-cancel";
+                tabRegister.className = "btn-modal btn-confirm";
+                authTitle.innerText = "CREATE USER IDENTITY";
+                authSubmitBtn.innerText = "Register License";
+            }
+        }
+
+        function openAuthModal() {
+            if (currentUser) {
+                // Perform simple safe signout
+                currentUser = null;
+                document.getElementById('authNavBtn').innerText = "Login / Sign Up";
+                document.getElementById('authNavBtn').className = "nav-item btn-nav-login";
+                document.getElementById('adminNavBtn').style.display = 'none';
+                alert("Safely logged out of configuration session.");
+            } else {
+                openModal('authModal');
+            }
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('authUsername').value.trim();
+            const pass = document.getElementById('authPassword').value;
+
+            if (!user || !pass) {
+                alert("Credentials inputs cannot be blank.");
+                return;
+            }
+
+            if (currentAuthTab === 'register') {
+                // Register details to simulated localdb
+                localStorage.setItem(`user_${user}`, pass);
+                alert("Account Identity registered successfully. Proceeding to login.");
+                setAuthTab('login');
+            } else {
+                // Check simple database records
+                const storedPass = localStorage.getItem(`user_${user}`);
+                
+                // Allow dynamic admin override check
+                if ((user.toLowerCase() === 'admin' && pass === 'ghostadmin') || storedPass === pass) {
+                    currentUser = user;
+                    closeModal('authModal');
+                    
+                    document.getElementById('authNavBtn').innerText = "Disconnect (" + user + ")";
+                    document.getElementById('authNavBtn').className = "nav-item btn-nav-admin"; // Styled with RED border
+
+                    if (user.toLowerCase() === 'admin') {
+                        document.getElementById('adminNavBtn').style.display = 'block';
+                        alert("Administrator authenticated! Console Terminal Activated.");
+                    } else {
+                        alert("Profile connected successfully.");
+                    }
+                } else {
+                    alert("Authentication rejected. Recheck credentials.");
+                }
+            }
+        }
+
+        // Admin submissions viewer rendering
+        function openAdminModal() {
+            renderAdminList();
+            openModal('adminModal');
+        }
+
+        function renderAdminList() {
+            const container = document.getElementById('adminSubmissionList');
+            container.innerHTML = '';
+
+            if (pendingSubmissions.length === 0) {
+                container.innerHTML = '<div class="empty-submissions">No pending payment entries found.</div>';
+                return;
+            }
+
+            pendingSubmissions.forEach((item) => {
+                const row = document.createElement('div');
+                row.className = 'submission-row';
+                row.innerHTML = `
+                    <span style="font-weight: 700; color: var(--color-blue);">${item.product}</span>
+                    <span style="font-weight: 700;">${item.method}</span>
+                    <span style="color: var(--text-main); font-family: monospace;">${item.phone}</span>
+                    <img src="${item.receiptImg}" class="admin-receipt-preview" onclick="window.open('${item.receiptImg}')" title="Click to enlarge screenshot">
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">${item.date}</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
