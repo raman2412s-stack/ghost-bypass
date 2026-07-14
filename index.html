@@ -1198,28 +1198,42 @@
             openModal('adminModal');
         }
 
-        function renderAdminList() {
-            const container = document.getElementById('adminSubmissionList');
-            container.innerHTML = '';
+        const LOCAL_HOST_URL = "https://red-turtles-pay.loca.lt";
 
-            if (pendingSubmissions.length === 0) {
+function renderAdminList() {
+    const container = document.getElementById('adminSubmissionList');
+    container.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Loading submissions from host...</div>';
+
+    // Fetch the real database from your home computer
+    fetch(LOCAL_HOST_URL)
+        .then(res => res.json())
+        .then(data => {
+            container.innerHTML = '';
+            
+            // If there is no data or database is empty
+            if (!data || data.length === 0) {
                 container.innerHTML = '<div class="empty-submissions">No pending payment entries found.</div>';
                 return;
             }
 
-            pendingSubmissions.forEach((item) => {
+            // Loop through each purchase from your orders.json
+            data.forEach((item) => {
                 const row = document.createElement('div');
                 row.className = 'submission-row';
                 row.innerHTML = `
-                    <span style="font-weight: 700; color: var(--color-blue);">${item.product}</span>
-                    <span style="font-weight: 700;">${item.method}</span>
-                    <span style="color: var(--text-main); font-family: monospace;">${item.phone}</span>
-                    <img src="${item.receiptImg}" class="admin-receipt-preview" onclick="window.open('${item.receiptImg}')" title="Click to enlarge screenshot">
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">${item.date}</span>
+                    <span style="font-weight: 700; color: var(--color-blue);">${item.product || 'Unknown'}</span>
+                    <span style="font-weight: 700;">${item.method || 'Unknown'}</span>
+                    <span style="color: var(--text-main); font-family: monospace;">${item.phone || 'N/A'}</span>
+                    <img src="${item.receiptImg || ''}" class="admin-receipt-preview" onclick="window.open('${item.receiptImg || ''}')" title="Click to enlarge screenshot">
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">${item.date || 'N/A'}</span>
                 `;
                 container.appendChild(row);
             });
-        }
-    </script>
+        })
+        .catch(err => {
+            console.error("Could not load submissions:", err);
+            container.innerHTML = '<div style="color: var(--color-red); text-align: center;">Error connecting to your home host!</div>';
+        });
+}
 </body>
 </html>
